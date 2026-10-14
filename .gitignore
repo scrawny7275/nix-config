@@ -1,0 +1,23 @@
+*.ovpn
+*.cer
+*.eml
+*.key
+*.crt
+*.pem
+!*.enc
+**/credentials
+
+**/node_modules/
+**/@girs/
+**/geo.toml
+.metals/
+.scala-build/
+.bsp/
+result
+
+# opencode session scratch (plans, scratchpad)
+.opencode/
+
+# python
+__pycache__/
+*.pyc
