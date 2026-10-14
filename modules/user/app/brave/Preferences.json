@@ -1,0 +1,45 @@
+{
+  "brave": {
+    "tabs": {
+      "vertical_tabs_collapsed": true,
+      "vertical_tabs_enabled": true,
+      "vertical_tabs_show_scrollbar": false,
+      "vertical_tabs_show_title_on_window": false
+    },
+    "new_tab_page": {
+      "show_brave_news": false,
+      "show_rewards": false,
+      "show_stats": false,
+      "show_together": false
+    }
+  },
+  "bookmark_bar": {
+    "show_on_all_tabs": false
+  },
+  "browser": {
+    "window_placement": {
+      "bottom": 634,
+      "left": 0,
+      "maximized": false,
+      "right": 1264,
+      "top": 0
+    }
+  },
+  "settings": {
+    "clear_data": {
+      "brave_leo": true,
+      "brave_leo_on_exit": true,
+      "browsing_history_on_exit": true,
+      "cache_on_exit": true,
+      "cookies_on_exit": true,
+      "download_history_on_exit": true,
+      "form_data": true,
+      "form_data_on_exit": true,
+      "hosted_apps_data_on_exit": true,
+      "site_settings": true,
+      "site_settings_on_exit": true,
+      "time_period": 4,
+      "time_period_basic": 4
+    }
+  }
+}
