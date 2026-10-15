@@ -1,0 +1,89 @@
+* {
+    background-image: none;
+    background-color: transparent;
+}
+
+window {
+    background-color: rgba(12, 12, 12, 0.8);
+}
+
+button {
+    color: white;
+    background-color: rgba(30, 30, 46, 0.8);
+    border: none;
+    border-radius: 0px;
+    padding: 10px;
+
+    /* Icon rendering essentials */
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 25%;
+
+    transition:
+        background-color 0s,
+        all 0.3s cubic-bezier(0.55, 0, 0.28, 1.682);
+}
+
+button:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    border: 2px solid rgba(255, 255, 255, 0.25);
+    border-radius: 16px;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.4);
+    transform: scale(1.1);
+    transition:
+        background-color 0s,
+        all 0.25s ease-in-out;
+}
+
+button:focus {
+    background-color: rgba(255, 255, 255, 0.15);
+    border: 2px solid rgba(255, 255, 255, 0.25);
+    border-radius: 16px;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.4);
+}
+
+/* ── Individual buttons ── */
+#lock {
+    border-radius: 20px 0px 0px 20px;
+    background-image: url("./icons/lock-alt-svgrepo-com.svg");
+}
+
+#logout {
+    border-radius: 0px;
+    background-image: url("./icons/logout-svgrepo-com.svg");
+}
+#logout:hover {
+    border-radius: 16px;
+}
+
+#suspend {
+    border-radius: 0px;
+    background-image: url("./icons/moon-svgrepo-com.svg");
+}
+#suspend:hover {
+    border-radius: 16px;
+}
+
+#hibernate {
+    border-radius: 0px;
+    background-image: url("./icons/power-button-svgrepo-com.svg");
+}
+#hibernate:hover {
+    border-radius: 16px;
+}
+
+#shutdown {
+    border-radius: 0px;
+    background-image: url("./icons/system-shutdown-svgrepo-com.svg");
+}
+#shutdown:hover {
+    border-radius: 16px;
+}
+
+#reboot {
+    border-radius: 0px 20px 20px 0px;
+    background-image: url("./icons/arrow-counterclockwise-svgrepo-com.svg");
+}
+#reboot:hover {
+    border-radius: 16px;
+}
