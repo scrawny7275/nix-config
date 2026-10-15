@@ -1,0 +1,25 @@
+window {
+    background: @bg-transparent;
+    border: 1px solid @accent-transparent;
+    border-radius: 999px;
+    box-shadow: 0 4px 12px @shadow;
+}
+
+/* Match your monospace font preference */
+label {
+    font-family: monospace;
+    font-size: 10pt;
+    color: @text;
+}
+
+image {
+    color: @text;
+}
+
+progressbar progress {
+    background: @accent;
+}
+
+progressbar trough {
+    background: @text-15;
+}
