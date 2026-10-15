@@ -1,0 +1,13 @@
+(defpoll splash-text :interval "30s" "/nix/store/2nc97mqhg78gscs1zpikqsyhx0yy1hzi-eww-cycle-quote")
+
+(defwindow splash
+  :monitor 0
+  :geometry (geometry :x "0%" :y "5px" :width "100%" :height "30px" :anchor "bottom center")
+  :stacking "bottom"
+  :exclusive false
+  :focusable false
+  (box
+    :halign "center"
+    :valign "center"
+    :class "splash-container"
+    (label :text splash-text :class "splash")))
