@@ -1,0 +1,12 @@
+# gitleaks configuration — narrow allowlists only, extend deliberately.
+title = "nix-config gitleaks config"
+
+[allowlist]
+description = "documentation examples"
+paths = [
+  '''docs/independent-sops-secrets\.md''',
+]
+regexes = [
+  '''age1<public-key-fragment>''',
+  '''AGE-SECRET-KEY-<private-fragment>''',
+]
