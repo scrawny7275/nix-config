@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# .githooks/pre-push — delegates to the private release hook when present.
+# Enable once per clone: git config core.hooksPath .githooks
+# The private hook (~/nix-config-private/release-hooks/pre-push) carries the
+# repo-specific checks that must never be committed here (identity guard,
+# anonymization token sweep).
+set -uo pipefail
+PRIVATE_HOOK="$HOME/nix-config-private/release-hooks/pre-push"
+if [ -x "$PRIVATE_HOOK" ]; then
+  exec "$PRIVATE_HOOK" "$@"
+fi
+exit 0
