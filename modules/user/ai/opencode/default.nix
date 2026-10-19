@@ -27,14 +27,12 @@ in
     web.enable = false;
 
     settings = {
-      # default: nvidia/kimi-k3 (2026-09-25; tool-calling verified 85% of 547 msgs;
-      # re-verified live 2026-09-30 after the 09-28 outage: TTFB 31–41s, tools OK).
-      # Known quirks: rare empty completions (finish=stop, output=0) and multi-hour
-      # hangs (gateway 504 at ~302s, 2026-09-28) — both tracked by the provider-health
-      # timers; see "Subagent failure handling" + "provider-health" in AGENTS.md.
-      # Fallbacks if it degrades: nvidia/z-ai/glm-5.3 (potent, slow TTFB 57–84s) or
-      # opencode/mimo-v2.6-flash-free.
-      model = "nvidia/moonshotai/kimi-k3";
+      # default: nvidia/z-ai/glm-5.3 (2026-10-16; USER DECISION — kimi-k3 reached
+      # end of life on NVIDIA Build 2026-10-15, hard HTTP 410, verified in
+      # provider-health state.csv). GLM tool-calls verified live in narrow probes
+      # (TTFB 1.6–13.1s on 2026-10-16, far better than the historical 57–84s).
+      # Fallback if it degrades: opencode/mimo-v2.6-flash-free.
+      model = "nvidia/z-ai/glm-5.3";
       default_agent = "plan";
       # TODO: enable this within is on module, with an enable and enable opencode integration options.
       plugin = [

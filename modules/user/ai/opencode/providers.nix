@@ -112,13 +112,6 @@ in
           output = 0;
         };
       };
-      "moonshotai/kimi-k3" = {
-        name = "Kimi K3";
-        cost = {
-          input = 0;
-          output = 0;
-        };
-      };
     };
   };
 

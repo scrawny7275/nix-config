@@ -2,12 +2,12 @@
 # provider-matrix.sh — opencode provider/model health: one classifier, three run modes.
 #
 # Modes:
-#   --scope=narrow (default)  Stateful. GET /v1/models sanity + 3 parallel probes on the
-#       nvidia key (moonshotai/kimi-k3, z-ai/glm-5.3, nemotron control), each row appended
+#   --scope=narrow (default)  Stateful. GET /v1/models sanity + 2 parallel probes on the
+#       nvidia key (z-ai/glm-5.3, nemotron control), each row appended
 #       to state.csv. On roll-up state change (HEALTHY/DEGRADED/BROKEN) prints a TRANSITION
-#       line to stdout (-> user journal) and notify-sends. kimi leaving HEALTHY triggers one
-#       310s confirm probe (NVIDIA gateway 504s at ~302s) to settle HANG-SUSPECT vs
-#       HANG-DEFINITIVE. First run records a baseline without notifying.
+#       line to stdout (-> user journal) and notify-sends. First run records a baseline
+#       without notifying. (2026-10-16: kimi-k3 probe dropped — EOL'd on NVIDIA Build,
+#       every probe a deterministic HTTP 410; its 310s HANG-confirm went with it.)
 #   --scope=all    Snapshot over every configured provider x model in opencode.json
 #       (URLs/keys derived from its {file:...} tokens — the same source opencode uses).
 #       No state transitions, no notify. omniroute -> UNDEF (auth mismatch unresolved);
@@ -19,7 +19,7 @@
 #
 # Classes: OK | SLOW (200, TTFB>30s) | BUDGET-EXHAUSTED (200, finish=length, all tokens
 #   reasoning — benign probe artifact) | EMPTY-STOP (200, finish=stop, no content, no
-#   tool_calls — the known kimi-k3 quirk) | HANG-SUSPECT (connect ok, 0 bytes >=120s) |
+#   tool_calls — first seen as a kimi-k3 quirk, pre-EOL) | HANG-SUSPECT (connect ok, 0 bytes >=120s) |
 #   HANG-DEFINITIVE (0 bytes >=300s or gateway 504) | ENTITLED-404 | NOT-FOUND | AUTH |
 #   EXTERNAL-ONLY | QUOTA | RATE | OVERLOAD | UNDEF | SKIPPED | LOCAL-NET | STALL | UNKNOWN
 # Roll-ups: HEALTHY={OK,SLOW,BUDGET-EXHAUSTED}  DEGRADED={EMPTY-STOP,RATE,OVERLOAD,STALL}
@@ -34,7 +34,6 @@ SLOW_TTFB=30          # 200 but TTFB above this -> SLOW
 HANG_SUSPECT=120      # connect ok + 0 bytes at this age -> HANG-SUSPECT
 CHAT_CAP=130          # chat probe --max-time (slow-but-alive glm TTFB measured 57-84s)
 CTRL_CAP=30           # control probe cap (nemotron answers <1s when healthy)
-CONFIRM_CAP=310       # kimi transition confirm (gateway 504 arrives ~302s)
 PROBE_TOKENS=500      # floor: below this, reasoning models legitimately emit no content
 
 STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/provider-health"
@@ -251,7 +250,7 @@ narrow() {
   if [ "$shttp" = "000" ]; then
     echo "TRANSITION net: GET $base/models unreachable -> LOCAL-NET for all nvidia probes"
     local m old
-    for m in "nvidia/moonshotai/kimi-k3" "nvidia/z-ai/glm-5.3" "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning"; do
+    for m in "nvidia/z-ai/glm-5.3" "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning"; do
       old=$(last_rollup "$m")
       csv_row narrow "$m" 000 0 "$CTRL_CAP" 0 LOCAL-NET "models GET 000 (net sanity)"
       transition "$m" "$old" "BROKEN" "LOCAL-NET" "models GET 000"
@@ -259,33 +258,22 @@ narrow() {
     return 0
   fi
 
-  run_probe "kimi" "moonshotai/kimi-k3" "$base/chat/completions" "$key" \
-            "$CHAT_CAP" "$PROBE_TOKENS" yes narrow > "$STATE_DIR/.p1" &
   run_probe "glm" "z-ai/glm-5.3" "$base/chat/completions" "$key" \
-            "$CHAT_CAP" "$PROBE_TOKENS" yes narrow > "$STATE_DIR/.p2" &
+            "$CHAT_CAP" "$PROBE_TOKENS" yes narrow > "$STATE_DIR/.p1" &
   run_probe "ctrl" "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning" "$base/chat/completions" "$key" \
-            "$CTRL_CAP" "$PROBE_TOKENS" no narrow > "$STATE_DIR/.p3" &
+            "$CTRL_CAP" "$PROBE_TOKENS" no narrow > "$STATE_DIR/.p2" &
   wait
 
   local i probe http ttfb total bytes class detail old ru_new
-  for i in 1 2 3; do
+  for i in 1 2; do
     case $i in
-      1) probe="nvidia/moonshotai/kimi-k3" ;;
-      2) probe="nvidia/z-ai/glm-5.3" ;;
-      3) probe="nvidia/nemotron-3-nano-omni-30b-a3b-reasoning" ;;
+      1) probe="nvidia/z-ai/glm-5.3" ;;
+      2) probe="nvidia/nemotron-3-nano-omni-30b-a3b-reasoning" ;;
     esac
     IFS=$'\t' read -r http ttfb total bytes class detail < "$STATE_DIR/.p$i"
     rm -f "$STATE_DIR/.p$i"
     old=$(last_rollup "$probe")
     ru_new=$(rollup "$class")
-    # kimi regression -> one 310s confirm to settle HANG classes (skip on first-run baseline)
-    if [ "$i" = 1 ] && [ "$ru_new" != "HEALTHY" ] && [ "$old" = "HEALTHY" ]; then
-      IFS=$'\t' read -r http ttfb total bytes class detail < <(
-        run_probe "kimi-confirm" "moonshotai/kimi-k3" "$base/chat/completions" "$key" \
-                  "$CONFIRM_CAP" "$PROBE_TOKENS" yes narrow)
-      detail="confirm@${CONFIRM_CAP}s: $detail"
-      ru_new=$(rollup "$class")
-    fi
     csv_row narrow "$probe" "$http" "$ttfb" "$total" "$bytes" "$class" "$detail"
     transition "$probe" "$old" "$ru_new" "$class" "$detail"
   done

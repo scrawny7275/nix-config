@@ -43,7 +43,7 @@ in
   config = lib.mkIf cfg.enable {
     systemd.user.services.provider-health = {
       Unit = {
-        Description = "opencode provider health — narrow probe (kimi/glm/control)";
+        Description = "opencode provider health — narrow probe (glm/control)";
         # no After=sops-nix: the script reads secrets via resolved file paths from
         # opencode.json, which are rendered before the session starts.
       };
@@ -52,7 +52,8 @@ in
         Type = "oneshot";
         Environment = [ "PATH=${probePath}" ];
         ExecStart = "${pkgs.bash}/bin/bash ${script} --scope=narrow";
-        # worst case: 130s probes + 310s kimi confirm, parallel → ~450s
+        # worst case: 130s probes in parallel (kimi 310s confirm removed with the
+        # kimi probe itself, 2026-10-16) — generous margin kept
         TimeoutStartSec = 900;
       };
     };

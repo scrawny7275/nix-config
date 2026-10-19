@@ -56,22 +56,19 @@ For full steelmanning, assumption-surfacing, and counterpoint analysis on demand
 
 ## Subagent failure handling
 
-- A subagent Task that returns an empty result with no error is a transient endpoint quirk, not a verdict (known signature: nvidia/kimi-k3 occasionally answers with `finish=stop, output=0` after ~32 reasoning tokens — reproduced live 2026-09-25).
-- RETRY THE SAME SPAWN on kimi-k3 — after a short pause, never immediately (immediate bursts hit the endpoint's 429 and repeat-empty pathologies). Empties alone are cheap; keep them on kimi.
-- ESCALATE to the `sparring-glm` agent (subagent_type / task with that agent name; identical discipline, model pinned to `z-ai/glm-5.3`, key already in sops — same prompt) when EITHER:
-  - the retry returns the HANG signature — an unterminated run of `!!!!!…` characters (kimi-k3 stuck; more waiting/retries will not finish it), OR
-  - the retry budget is exhausted (cap: 3 kimi attempts total per task; unbounded retries just burn provider quota).
-- Verify any spawn's output is non-empty before using it; if a sparring-glm respawn also returns empty, proceed inline and note the double-degraded event.
-- Track empty/hang events (timestamp + batch context) — the rate is the revert trigger for the default model choice: if interactive-session empties exceed ~1 in 20 turns, or >50% of subagent batches need GLM escalation over a week, reconsider the default (fallback: `opencode/mimo-v2.6-flash-free`).
-- USER DECISION 2026-10-01: default model stays `nvidia/moonshotai/kimi-k3`; the escalation above (kimi retries → GLM on hang/budget) is the mitigation, not a default-model change.
+- A subagent Task that returns an empty result with no error is a transient endpoint quirk, not a verdict. RETRY THE SAME SPAWN once, after a short pause (never immediately — immediate bursts hit 429s and repeat-empty pathologies). If the retry is also empty, proceed inline and note the double-empty event.
+- Verify any spawn's output is non-empty before using it.
+- Track empty events (timestamp + batch context) — the rate is the trigger to reconsider the default model: if interactive-session empties exceed ~1 in 20 turns, or >50% of subagent batches return empty over a week, reconsider the default (fallback: `opencode/mimo-v2.6-flash-free`).
+- History: the default until 2026-10-16, nvidia/kimi-k3, had rare empty completions (`finish=stop, output=0` after ~32 reasoning tokens) and multi-hour hangs (gateway 504 at ~302s) — the retry-then-escalate flow was built for it. kimi-k3 reached end of life on NVIDIA Build (2026-10-15, hard HTTP 410, permanent).
+- USER DECISION 2026-10-16: default model → `nvidia/z-ai/glm-5.3` (kimi-k3 EOL'd; supersedes the 2026-10-01 keep-kimi decision). The `sparring-glm` escalation agent was retired the same day — pinned to the same model as the new default, escalation to it became meaningless.
 
 ## provider-health (installed 2026-10-05)
 
-- Both kimi-k3 failure modes are measured continuously by `scripts/health/provider-matrix.sh` (wired via `modules/user/ai/opencode/provider-health.nix`): a 20-min narrow probe (kimi-k3, z-ai/glm-5.3, nemotron control) and the 08:00 daily checkout (full matrix + 24h digest; catch-up on wake, never wakes the laptop).
+- Default-model health is measured continuously by `scripts/health/provider-matrix.sh` (wired via `modules/user/ai/opencode/provider-health.nix`): a 20-min narrow probe (z-ai/glm-5.3 + nemotron control) and the 08:00 daily checkout (full matrix + 24h digest; catch-up on wake, never wakes the laptop). kimi-k3 was dropped from the probe set 2026-10-16 — its EOL made every probe a deterministic 410, zero information.
 - Data: `${XDG_STATE_HOME:-~/.local/state}/provider-health/state.csv` (raw `connect_s/ttfb/bytes/http` + class per probe), roll-up transitions in the user journal + tide-island notifications (via `quickshell-notifyd`, which owns `org.freedesktop.Notifications`; tide-island only mirrors bus traffic — it is not a daemon).
 - Classes: `OK SLOW BUDGET-EXHAUSTED EMPTY-STOP HANG-SUSPECT HANG-DEFINITIVE SERVER-504 ENTITLED-404 AUTH QUOTA RATE OVERLOAD EXTERNAL-ONLY UNDEF SKIPPED LOCAL-NET STALL UNKNOWN`. Roll-ups: HEALTHY / DEGRADED (EMPTY-STOP, RATE, OVERLOAD, STALL) / BROKEN (rest).
-- Dual-mode revert gate over a trailing 24h of state.csv (either fires → reconsider the default): interactive empties >1 in 20 turns **or** kimi HANG-class rows >5% of kimi narrow probes. Recovery back to kimi after a flip: kimi `OK`/`SLOW` sustained ≥12 consecutive probes (~4h) and no HANG rows trailing 24h. Fallback order: `nvidia/z-ai/glm-5.3` (potent; TTFB 57–84s) → `opencode/mimo-v2.6-flash-free`.
-- Known history: 2026-09-28 kimi hung account-wide-style (gateway 504 at ~302s; 1 success/94 starts), recovered by 09-30 (TTFB 31–41s, tool-calls verified). Probe timeouts <120s misclassify slow-but-alive models (glm-5.3 healthy at TTFB 57–84s) — do not "fix" the caps down.
+- Degradation gate over a trailing 24h of state.csv (either fires → reconsider the default, fallback `opencode/mimo-v2.6-flash-free`): interactive empties >1 in 20 turns **or** glm non-HEALTHY rows >5% of glm narrow probes.
+- Known history: 2026-09-28 kimi hung account-wide-style (gateway 504 at ~302s; 1 success/94 starts), recovered 09-30, EOL'd 2026-10-15. Probe timeouts <120s misclassify slow-but-alive models (glm-5.3 measured TTFB 57–84s historically, 1.6–13.1s on 2026-10-16) — do not "fix" the caps down.
 
 ## Artifact placement (hard rule, applies to every session)
 
