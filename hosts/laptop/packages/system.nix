@@ -15,7 +15,7 @@
     gvfs # Virtual Filesystem support library
     usbutils # Tools for working with USB devices, such as lsusb
     udiskie # Removable disk automounter for udisks
-    # ntfs3g removed — using in-kernel ntfs3 driver (boot.kernelModules)
+    ntfs3g # provides ntfsfix (NTFS dirty-flag repair/clear) + FUSE fallback; udisks2 prefers kernel ntfs3 (ntfs_drivers=ntfs3,ntfs)
     libmtp # Implementation of Microsoft's Media Transfer Protocol
     bitwarden-desktop # Secure and free password manager for all of your devices
     libsecret # Library for storing and retrieving passwords and other secrets (bitwarden posible need it )

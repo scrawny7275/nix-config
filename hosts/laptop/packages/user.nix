@@ -92,7 +92,6 @@ in
       gvfs # Virtual Filesystem support library
       usbutils # Tools for working with USB devices, such as lsusb
       udiskie # Removable disk automounter for udisks
-      # ntfs3g removed — using in-kernel ntfs3 driver (boot.kernelModules)
       libmtp # Implementation of Microsoft's Media Transfer Protocol
       udisks # Daemon, tools and libraries to access and manipulate disks, storage devices and technologies
 
