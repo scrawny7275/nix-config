@@ -134,6 +134,10 @@
           sbt-1_4_7 = pkgs.callPackage ./modules/shared/pkgs/sbt-1_4_7.nix {
             jdk = pkgs.temurin-bin-11;
           };
+          wordcraft = pkgs.callPackage ./pkgs/wordcraft { };
+          pdfcraft = pkgs.callPackage ./pkgs/pdfcraft { };
+          deckcraft = pkgs.callPackage ./pkgs/deckcraft { };
+          blanc = pkgs.callPackage ./pkgs/blanc { };
         }
       );
 

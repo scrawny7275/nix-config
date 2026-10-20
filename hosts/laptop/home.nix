@@ -103,6 +103,10 @@ in
     ../../modules/user/app/yazi.nix
     ../../modules/user/app/tuta.nix
     ../../modules/user/app/anytype.nix # pinned 0.57.3 AppImage (replaces channel anytype)
+    ../../modules/user/app/wordcraft.nix # pinned 0.8.0 release tarball (binary)
+    ../../modules/user/app/pdfcraft.nix # pinned 0.9.0 release tarball (binary; ArtCraft)
+    ../../modules/user/app/deckcraft.nix # pinned 0.8.0 release tarball (binary; ArtCraft)
+    ../../modules/user/app/blanc.nix # pinned 1.39.0 AppImage (Electron browser)
 
     ../../modules/user/networking/alpaca.nix
     ./proxy-options.nix
