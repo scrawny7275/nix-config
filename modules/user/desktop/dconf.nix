@@ -1,7 +1,13 @@
 # modules/user/desktop/dconf.nix
-{ pkgs, ... }:
+{
+  config,
+  pkgs,
+  ...
+}:
 
 {
+  imports = [ ../../shared/options/appearance.nix ];
+
   home.packages = with pkgs; [
     cosmic-icons # Keep if other apps still reference it, or remove
     pop-icon-theme
@@ -13,7 +19,7 @@
   dconf.enable = true;
   dconf.settings = {
     "org/gnome/desktop/interface" = {
-      color-scheme = "prefer-dark";
+      color-scheme = config.appearance.colorScheme;
       icon-theme = "Yaru-dark";
       cursor-theme = "Bibata-Modern-Classic";
       cursor-size = 24;

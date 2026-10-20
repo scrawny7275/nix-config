@@ -1,7 +1,13 @@
 # modules/user/desktop/gtk.nix
-{ pkgs, ... }:
+{
+  config,
+  pkgs,
+  ...
+}:
 
 {
+  imports = [ ../../shared/options/appearance.nix ];
+
   gtk = {
     enable = true;
     iconTheme = {
@@ -21,12 +27,12 @@
     };
 
     gtk3.extraConfig = {
-      gtk-application-prefer-dark-theme = true;
+      gtk-application-prefer-dark-theme = (config.appearance.colorScheme == "prefer-dark");
       gtk-decoration-layout = ":close";
     };
 
     gtk4.extraConfig = {
-      gtk-application-prefer-dark-theme = true;
+      gtk-application-prefer-dark-theme = (config.appearance.colorScheme == "prefer-dark");
       gtk-decoration-layout = ":close";
     };
   };
