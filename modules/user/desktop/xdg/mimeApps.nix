@@ -1,68 +1,57 @@
 # modules/user/desktop/xdg/mimeApps.nix
+# Generic default-application mapping — role selection is host data via
+# modules.user.desktop.xdg.defaultApps (see default.nix for per-role override
+# and the extraDefaultApplications escape hatch).
+# Document types owned by the ArtCraft app modules — pdf, the word-processing
+# family, the presentation family — are deliberately absent here: those
+# modules self-register via mkDefault (modules/user/app/{wordcraft,pdfcraft,
+# deckcraft}.nix). Spreadsheets stay on the office-suite role: no craft
+# sibling exists.
+{ defaultApps }:
 
-let
-  # TODO: refactor this modules to have app selection
-  # as host-specific data, making this module generic and reusable accross hosts
-  browser = "helium.desktop";
-  file-manager = "org.system76.CosmicFiles.desktop";
-  image-viewer = "org.kde.gwenview.desktop";
-  video-player = "vlc.desktop";
-  music-player = "org.system76.CosmicPlayer.desktop";
-  code-editor = "zeditor.desktop";
-  text-editor = "org.system76.CosmicEdit.desktop";
-  document-viewer = "org.kde.okular.desktop";
-  file-archiver = "org.kde.ark.desktop";
-  torrent-client = "gopeed.desktop";
-  download-manager = "gopeed.desktop";
-  office-suite = "onlyoffice-desktopeditors.desktop";
-
-in
 {
   enable = true;
   defaultApplications = {
-    "inode/directory" = file-manager;
-    "x-scheme-handler/file" = [ file-manager ];
-    "x-scheme-handler/about" = [ file-manager ];
+    "inode/directory" = defaultApps.file-manager;
+    "x-scheme-handler/file" = [ defaultApps.file-manager ];
+    "x-scheme-handler/about" = [ defaultApps.file-manager ];
 
-    "application/pdf" = office-suite;
-    "application/cbz" = document-viewer;
-    "application/x-bzip2" = file-archiver;
-    "application/x-gzip" = file-archiver;
-    "application/x-tar" = file-archiver;
-    "application/zip" = file-archiver;
-    "application/json" = text-editor;
-    "application/txt" = text-editor;
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document" = office-suite;
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" = office-suite;
-    "application/vnd.openxmlformats-officedocument.presentationml.presentation" = office-suite;
-    "application/x-zerosize" = text-editor;
+    "application/cbz" = defaultApps.document-viewer;
+    "application/x-bzip2" = defaultApps.file-archiver;
+    "application/x-gzip" = defaultApps.file-archiver;
+    "application/x-tar" = defaultApps.file-archiver;
+    "application/zip" = defaultApps.file-archiver;
+    "application/json" = defaultApps.text-editor;
+    "application/txt" = defaultApps.text-editor;
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" = defaultApps.office-suite;
+    "application/x-zerosize" = defaultApps.text-editor;
 
-    "audio/mpeg" = music-player;
-    "audio/flac" = music-player;
-    "audio/vnd.wave" = music-player;
+    "audio/mpeg" = defaultApps.music-player;
+    "audio/flac" = defaultApps.music-player;
+    "audio/vnd.wave" = defaultApps.music-player;
 
-    "image/gif" = image-viewer;
-    "image/jpeg" = image-viewer;
-    "image/png" = image-viewer;
-    "image/svg" = image-viewer;
-    "image/tiff" = image-viewer;
-    "image/webp" = image-viewer;
+    "image/gif" = defaultApps.image-viewer;
+    "image/jpeg" = defaultApps.image-viewer;
+    "image/png" = defaultApps.image-viewer;
+    "image/svg" = defaultApps.image-viewer;
+    "image/tiff" = defaultApps.image-viewer;
+    "image/webp" = defaultApps.image-viewer;
 
-    "text/html" = browser;
-    "text/xml" = text-editor;
-    "text/markdown" = text-editor;
-    "text/plain" = text-editor;
+    "text/html" = defaultApps.browser;
+    "text/xml" = defaultApps.text-editor;
+    "text/markdown" = defaultApps.text-editor;
+    "text/plain" = defaultApps.text-editor;
 
-    "video/mpeg" = video-player;
-    "video/webm" = video-player;
-    "video/x-matroska" = video-player;
-    "video/mp4" = video-player;
+    "video/mpeg" = defaultApps.video-player;
+    "video/webm" = defaultApps.video-player;
+    "video/x-matroska" = defaultApps.video-player;
+    "video/mp4" = defaultApps.video-player;
 
-    "x-scheme-handler/http" = browser;
-    "x-scheme-handler/https" = browser;
+    "x-scheme-handler/http" = defaultApps.browser;
+    "x-scheme-handler/https" = defaultApps.browser;
     # "x-scheme-handler/mailto" = "mailto-gmail.desktop";
 
-    "x-scheme-handler/magnet" = torrent-client;
-    "application/x-bittorrent" = torrent-client;
+    "x-scheme-handler/magnet" = defaultApps.torrent-client;
+    "application/x-bittorrent" = defaultApps.torrent-client;
   };
 }

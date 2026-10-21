@@ -28,6 +28,11 @@
 let
   deckcraft = pkgs.callPackage ../../../pkgs/deckcraft { };
 
+  # Default handler for the presentation family (user decision 2026-10-20).
+  # mkDefault: the generic xdg module's plain entries and host overrides
+  # (modules.user.desktop.xdg.extraDefaultApplications) win.
+  dc = lib.mkDefault "ai.storyteller.deckcraft.desktop";
+
   # DeckCraft's UiState.brightness enum is exactly Light|Dark (no "system"
   # variant); every declared color scheme except prefer-dark maps to light.
   brightness =
@@ -70,6 +75,13 @@ in
   imports = [ ../../shared/options/appearance.nix ];
 
   home.packages = [ deckcraft ];
+
+  xdg.mimeApps.defaultApplications = {
+    "application/x-deckcraft" = dc;
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation" = dc;
+    "application/vnd.openxmlformats-officedocument.presentationml.template" = dc;
+    "application/vnd.openxmlformats-officedocument.presentationml.slideshow" = dc;
+  };
 
   home.activation.deckcraftAppearance = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     ${syncScript}
