@@ -65,6 +65,20 @@ let
         default = false;
       };
     };
+
+  # fixture roles for the pure xdg mimeApps mapping test
+  testRoleApps = {
+    browser = "test-browser.desktop";
+    file-manager = "test-file-manager.desktop";
+    image-viewer = "test-image-viewer.desktop";
+    video-player = "test-video-player.desktop";
+    music-player = "test-music-player.desktop";
+    text-editor = "test-text-editor.desktop";
+    document-viewer = "test-document-viewer.desktop";
+    file-archiver = "test-file-archiver.desktop";
+    torrent-client = "test-torrent-client.desktop";
+    office-suite = "test-office-suite.desktop";
+  };
 in
 {
   # --- stub semantics (public surface must stay generic) ---
@@ -140,5 +154,55 @@ in
         ];
       }).config.programs.ssh.settings;
     expected = { };
+  };
+
+  # --- xdg mimeApps generic mapping (pure function of roleApps) ---
+  # Locks the role → MIME-type mapping shape; app-module-owned families
+  # (pdf/word/presentation) are deliberately absent here and verified
+  # against the live merged config separately (forced-eval baseline).
+  testXdgMimeAppsMapping = {
+    expr =
+      (import ../modules/user/desktop/xdg/mimeApps.nix { roleApps = testRoleApps; }).defaultApplications;
+    expected = {
+      "inode/directory" = "test-file-manager.desktop";
+      "x-scheme-handler/file" = [ "test-file-manager.desktop" ];
+      "x-scheme-handler/about" = [ "test-file-manager.desktop" ];
+
+      "application/cbz" = "test-document-viewer.desktop";
+      "application/x-bzip2" = "test-file-archiver.desktop";
+      "application/x-gzip" = "test-file-archiver.desktop";
+      "application/x-tar" = "test-file-archiver.desktop";
+      "application/zip" = "test-file-archiver.desktop";
+      "application/json" = "test-text-editor.desktop";
+      "application/txt" = "test-text-editor.desktop";
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" = "test-office-suite.desktop";
+      "application/x-zerosize" = "test-text-editor.desktop";
+
+      "audio/mpeg" = "test-music-player.desktop";
+      "audio/flac" = "test-music-player.desktop";
+      "audio/vnd.wave" = "test-music-player.desktop";
+
+      "image/gif" = "test-image-viewer.desktop";
+      "image/jpeg" = "test-image-viewer.desktop";
+      "image/png" = "test-image-viewer.desktop";
+      "image/svg" = "test-image-viewer.desktop";
+      "image/tiff" = "test-image-viewer.desktop";
+      "image/webp" = "test-image-viewer.desktop";
+
+      "text/html" = "test-browser.desktop";
+      "text/xml" = "test-text-editor.desktop";
+      "text/markdown" = "test-text-editor.desktop";
+      "text/plain" = "test-text-editor.desktop";
+
+      "video/mpeg" = "test-video-player.desktop";
+      "video/webm" = "test-video-player.desktop";
+      "video/x-matroska" = "test-video-player.desktop";
+      "video/mp4" = "test-video-player.desktop";
+
+      "x-scheme-handler/http" = "test-browser.desktop";
+      "x-scheme-handler/https" = "test-browser.desktop";
+      "x-scheme-handler/magnet" = "test-torrent-client.desktop";
+      "application/x-bittorrent" = "test-torrent-client.desktop";
+    };
   };
 }
