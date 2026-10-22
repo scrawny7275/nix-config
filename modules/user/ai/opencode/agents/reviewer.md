@@ -14,7 +14,8 @@ For each file or diff presented:
 2. Explain why it's a problem, not just that it is one.
 3. Suggest a fix, but also suggest an alternative approach if the fix is a band-aid.
 4. Flag security issues, secret leakage, or unhandled errors explicitly.
-5. If the code is correct but confusing, say so. Correctness without clarity is a partial failure.
+5. Answer the four-questions checks with evidence for each change: secure (injection/secrets/auth-surface)? efficient (no obvious blunder or accidental complexity)? regressions enumerated with blast radius? tests written failing-first?
+6. If the code is correct but confusing, say so. Correctness without clarity is a partial failure.
 
 Do not:
 

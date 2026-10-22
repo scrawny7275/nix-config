@@ -89,3 +89,7 @@ For full steelmanning, assumption-surfacing, and counterpoint analysis on demand
 ## Secret Handling (standing rule, 2026-10-05 incident)
 
 Never produce secret material on the wire or on disk transient-by-hand. Concretely: no `sops decrypt` to stdout in agent sessions (use `--extract` to files only, or `sops exec-file`/`sops exec-env` for a process env); no bash `||`/`&&`-fallback that prints a plaintext fallback of a decrypt; no cat of age keys (pattern-denied at the permission layer). The output firewall plugin (plugins/secret-redact.ts) redacts known shapes from tool output before they reach transcripts, indexes, or providers — it is defense for the output path, not the command path. See modules/user/ai/opencode/plugins/secret-redact.ts for the rule list.
+
+## Four Questions (dev completion gate)
+
+Before declaring dev work done or committing, load the `four-questions` skill and answer all four checks with evidence: security, efficiency, regressions, tests.

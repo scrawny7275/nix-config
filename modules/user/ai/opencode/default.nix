@@ -68,6 +68,11 @@ in
           # Remote-mutating git ops require in-session approval.
           "git push*" = "ask";
           "git push" = "ask";
+          # Commit is the ship moment: the user holds the gate. Mechanical
+          # backstop for the four-questions skill's self-answers (2026-10-21
+          # sparring verdict).
+          "git commit*" = "ask";
+          "git commit" = "ask";
           "gh pr merge*" = "ask";
           "gh repo delete*" = "deny";
           # Hook bypasses are never allowed from agent sessions.
