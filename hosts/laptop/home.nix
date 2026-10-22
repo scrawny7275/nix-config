@@ -152,6 +152,25 @@ in
   modules.user.app.desktopEntryGuard.enable = true;
   modules.user.desktop.xdg.mimeAppsScan.enable = true; # existence gate for MIME defaults (registry = fitness gate)
 
+  # The laptop's explicit desktop-app policy. Plain assignments beat the
+  # module defaults and are validated against the roleCandidates registry
+  # at eval — a typo'd or unregistered ID fails the build with the
+  # registered alternatives named. The module's defaults remain as the
+  # portable fallback profile for hosts that declare nothing (and for any
+  # role left unset here).
+  modules.user.desktop.xdg.roleApps = {
+    browser = "helium.desktop";
+    file-manager = "com.system76.CosmicFiles.desktop";
+    image-viewer = "org.kde.gwenview.desktop";
+    video-player = "vlc.desktop";
+    music-player = "com.system76.CosmicPlayer.desktop";
+    text-editor = "com.system76.CosmicEdit.desktop";
+    document-viewer = "org.kde.okular.desktop";
+    file-archiver = "org.kde.ark.desktop";
+    torrent-client = "gopeed.desktop";
+    office-suite = "onlyoffice-desktopeditors.desktop";
+  };
+
   # Caveman: token-sink analyzer for agent sessions (`caveman learn`, read-only).
   # Go binaries + CLI packaged in modules/user/ai/caveman.nix (hashes pinned).
   # Proxy/wrap mode intentionally unused (no traffic interception).

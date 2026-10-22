@@ -26,6 +26,12 @@ in
     # vocabulary belongs to xdg.mimeApps.defaultApplications, the HM MIME
     # map these roles feed (the old name, defaultApps, collided with it).
     #
+    # These option defaults are the PORTABLE FALLBACK PROFILE: the laptop
+    # declares all ten selections explicitly in its host tree (validated
+    # against roleCandidates at eval); a host that declares nothing
+    # inherits this profile instead. Leaving a role unset here and there
+    # is the same thing.
+    #
     # Claiming contract: any module may claim a role by assigning
     # `lib.mkDefault "<id>.desktop"` — option defaults lose to any config
     # assignment, host plain assignments beat module mkDefaults, and two
