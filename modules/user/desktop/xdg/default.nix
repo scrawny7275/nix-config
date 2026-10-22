@@ -18,6 +18,8 @@ let
   roleValidation = import ./role-validation.nix { inherit lib; };
 in
 {
+  imports = [ ./mime-apps-scan.nix ];
+
   options.modules.user.desktop.xdg = {
     # Role → chosen desktop ID for the generic MIME mapping. The word
     # "default" is deliberately absent from this option name — that

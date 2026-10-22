@@ -88,6 +88,9 @@ in
     ../../modules/user/desktop/dconf.nix
     ../../modules/user/desktop/x11.nix
 
+    # TODO: Consider if this is properly imprted here or should be part of the ./packages axis
+    #   Consider if it should be a better classifction rather than use generic app, e.g.
+    #   alpaca is an service/app considered part of the networking
     # Desktop applications
     ../../modules/user/app/wpaperd.nix
     ../../modules/user/app/signal-desktop.nix
@@ -147,6 +150,7 @@ in
   modules.user.desktop.niri.useKdlConfig = true;
 
   modules.user.app.desktopEntryGuard.enable = true;
+  modules.user.desktop.xdg.mimeAppsScan.enable = true; # existence gate for MIME defaults (registry = fitness gate)
 
   # Caveman: token-sink analyzer for agent sessions (`caveman learn`, read-only).
   # Go binaries + CLI packaged in modules/user/ai/caveman.nix (hashes pinned).
