@@ -14,6 +14,8 @@ let
   mimeApps = import ./mimeApps.nix {
     roleApps = cfg.roleApps;
   };
+
+  roleValidation = import ./role-validation.nix { inherit lib; };
 in
 {
   options.modules.user.desktop.xdg = {
@@ -96,9 +98,52 @@ in
         without touching the generic role mapping.
       '';
     };
+
+    # Closed candidate registry: role → registered desktop IDs. App
+    # modules (or hosts, for raw packages) append candidates via plain
+    # list-merge; declaring a roleApps selection that was never
+    # registered fails at eval via post-merge assertions (option types
+    # cannot read merged config). Pairs with roleApps: roleCandidates
+    # is the menu, roleApps the pick.
+    roleCandidates = lib.mkOption {
+      type = lib.types.attrsOf (lib.types.listOf lib.types.str);
+      default = { };
+      description = ''
+        Registry of possible desktop IDs per role. Register an app in the
+        module that provides it (or at host level for raw packages);
+        declaring a roleApps value not present here fails evaluation
+        with the registered alternatives listed.
+      '';
+    };
   };
 
   config = {
+    # Seed candidates for the role defaults — deliberately written as
+    # independent literals (NOT derived from the roleApps values), so
+    # drift between a role's value and its candidate registration fails
+    # validation loudly. The residual hole — one typo pasted into BOTH
+    # strings — is covered by the activation-time existence scan.
+    # App modules add further candidates via plain list-merge.
+    modules.user.desktop.xdg.roleCandidates = {
+      browser = [ "helium.desktop" ];
+      file-manager = [ "com.system76.CosmicFiles.desktop" ];
+      image-viewer = [ "org.kde.gwenview.desktop" ];
+      video-player = [ "vlc.desktop" ];
+      music-player = [ "com.system76.CosmicPlayer.desktop" ];
+      text-editor = [ "com.system76.CosmicEdit.desktop" ];
+      document-viewer = [ "org.kde.okular.desktop" ];
+      file-archiver = [ "org.kde.ark.desktop" ];
+      torrent-client = [ "gopeed.desktop" ];
+      office-suite = [ "onlyoffice-desktopeditors.desktop" ];
+    };
+
+    # The registry gate: [] on a valid config, else eval failure naming
+    # the role, the declared value and the registered alternatives.
+    assertions = map (m: {
+      assertion = false;
+      message = m;
+    }) (roleValidation.roleSelectionErrors cfg.roleApps cfg.roleCandidates cfg.mimeTypeOverrides);
+
     xdg = {
       portal = portal;
       mime.enable = true;

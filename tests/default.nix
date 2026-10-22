@@ -79,6 +79,10 @@ let
     torrent-client = "test-torrent-client.desktop";
     office-suite = "test-office-suite.desktop";
   };
+
+  # registry fixtures: every role's selected value registered as candidate
+  roleValidation = import ../modules/user/desktop/xdg/role-validation.nix { inherit lib; };
+  testRoleCandidates = builtins.mapAttrs (_: v: [ v ]) testRoleApps;
 in
 {
   # --- stub semantics (public surface must stay generic) ---
@@ -204,5 +208,43 @@ in
       "x-scheme-handler/magnet" = "test-torrent-client.desktop";
       "application/x-bittorrent" = "test-torrent-client.desktop";
     };
+  };
+
+  # --- xdg closed candidate registry (pure roleSelectionErrors) ---
+  testRoleSelectionValid = {
+    expr = roleValidation.roleSelectionErrors testRoleApps testRoleCandidates { };
+    expected = [ ];
+  };
+
+  # the historical org.system76.* bug class must fail with the registered
+  # alternative named
+  testRoleSelectionTypoFails = {
+    expr = roleValidation.roleSelectionErrors
+      (testRoleApps // { file-manager = "org.system76.CosmicFiles.desktop"; })
+      testRoleCandidates
+      { };
+    expected = [
+      "xdg.roleApps.file-manager: \"org.system76.CosmicFiles.desktop\" is not a registered candidate (registered for file-manager: test-file-manager.desktop). Register it in modules.user.desktop.xdg.roleCandidates.file-manager or fix the desktop ID."
+    ];
+  };
+
+  testRoleRegistrationTypoFails = {
+    expr = roleValidation.roleSelectionErrors
+      testRoleApps
+      (testRoleCandidates // { brower = [ "x.desktop" ]; })
+      { };
+    expected = [
+      "xdg.roleCandidates.\"brower\" is not a known role (known roles: browser, document-viewer, file-archiver, file-manager, image-viewer, music-player, office-suite, text-editor, torrent-client, video-player)."
+    ];
+  };
+
+  testOverrideUnregisteredFails = {
+    expr = roleValidation.roleSelectionErrors
+      testRoleApps
+      testRoleCandidates
+      { "application/pdf" = "ghost.desktop"; };
+    expected = [
+      "xdg.mimeTypeOverrides.\"application/pdf\": references unregistered desktop ID(s) (known IDs: test-browser.desktop, test-document-viewer.desktop, test-file-archiver.desktop, test-file-manager.desktop, test-image-viewer.desktop, test-music-player.desktop, test-office-suite.desktop, test-text-editor.desktop, test-torrent-client.desktop, test-video-player.desktop). Register the app as a candidate for some role, or fix the ID."
+    ];
   };
 }
