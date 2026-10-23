@@ -1,4 +1,5 @@
 # modules/user/desktop/xdg/default.nix
+# Architecture, failure messages and recipes: docs/xdg-mime-defaults.md
 {
   config,
   lib,
