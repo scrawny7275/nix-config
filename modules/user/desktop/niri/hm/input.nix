@@ -1,4 +1,4 @@
-# modules/user/desktop/niri/hminput.nix
+# modules/user/desktop/niri/hm/input.nix
 {
   input = {
     focus-follows-mouse.enable = true;

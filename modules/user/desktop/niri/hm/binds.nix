@@ -1,4 +1,4 @@
-# modules/user/desktop/niri/hmbinds.nix
+# modules/user/desktop/niri/hm/binds.nix
 {
   binds = {
     # Show hotkey overlay

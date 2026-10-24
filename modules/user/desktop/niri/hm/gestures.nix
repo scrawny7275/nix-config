@@ -1,2 +1,2 @@
-# modules/user/desktop/niri/hmgestures.nix
+# modules/user/desktop/niri/hm/gestures.nix
 { gestures.hot-corners.enable = false; }

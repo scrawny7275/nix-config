@@ -1,4 +1,4 @@
-# modules/user/desktop/niri/hmkdl/debug.nix
+# modules/user/desktop/niri/kdl/debug.nix
 { inputs }:
 
 let

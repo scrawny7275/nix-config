@@ -1,4 +1,4 @@
-# modules/user/desktop/niri/hmkdl/gestures.nix
+# modules/user/desktop/niri/kdl/gestures.nix
 { inputs }:
 
 let

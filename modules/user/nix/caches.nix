@@ -1,4 +1,4 @@
-# modules/home/nix/caches.nix
+# modules/user/nix/caches.nix
 { pkgs, ... }:
 
 {

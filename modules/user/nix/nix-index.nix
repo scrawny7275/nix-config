@@ -1,4 +1,4 @@
-# modules/suer/nix/nix-index.nix
+# modules/user/nix/nix-index.nix
 {
   programs.nix-index = {
     enable = true;

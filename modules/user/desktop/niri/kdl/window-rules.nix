@@ -1,4 +1,4 @@
-# modules/user/desktop/niri/hmkdl/window-rules.nix
+# modules/user/desktop/niri/kdl/window-rules.nix
 { inputs }:
 
 let

@@ -1,4 +1,4 @@
-# modules/user/desktop/niri/hmdefault.nix
+# modules/user/desktop/niri/default.nix
 {
   config,
   pkgs,
@@ -58,6 +58,7 @@ in
     ../mako.nix
     ../dconf.nix
     ../xdg
+    ../swayidle
     ./cosmic-ext
 
     ../ags
@@ -123,6 +124,7 @@ in
     programs.cosmic-ext-niri.enable = false;
 
     modules.user.app.sunsetr.enable = true;
+    modules.user.desktop.swayidle.enable = true;
     modules.user.app.quickshell-notifyd.enable = true;
 
     home.sessionVariables = {

@@ -1,4 +1,4 @@
-# modules/user/app/eww/service.nix
+# modules/user/app/eww-splash/service.nix
 # Start eww as part of the graphical session
 { config, ... }:
 

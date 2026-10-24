@@ -1,4 +1,4 @@
-# modules/user/desktop/niri/hmcosmic-ext/assertions.nix
+# modules/user/desktop/niri/cosmic-ext/assertions.nix
 { cfg, config }:
 
 {

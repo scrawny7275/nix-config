@@ -1,4 +1,4 @@
-# modules/shared/pkgs/sbt-1_4_7-jdk8.nix
+# modules/shared/pkgs/sbt-1_4_7.nix
 {
   lib,
   fetchurl,

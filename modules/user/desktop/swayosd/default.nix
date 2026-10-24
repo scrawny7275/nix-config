@@ -1,4 +1,4 @@
-# modules/user/desktop/swaysosd/default.nix
+# modules/user/desktop/swayosd/default.nix
 let
   theme = import ../theme.nix; # adjust path as needed
 in

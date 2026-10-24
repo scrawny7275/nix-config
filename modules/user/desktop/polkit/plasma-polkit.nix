@@ -1,4 +1,4 @@
-# modules/user/polkit.nix
+# modules/user/desktop/polkit/plasma-polkit.nix
 { pkgs, ... }:
 
 {

@@ -1,4 +1,4 @@
-# modules/user/gnome-polkit.nix
+# modules/user/desktop/polkit/gnome-polkit.nix
 { pkgs, ... }:
 
 {

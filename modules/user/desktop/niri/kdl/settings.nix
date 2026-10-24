@@ -1,4 +1,4 @@
-# modules/user/desktop/niri/hmkdl/config.nix
+# modules/user/desktop/niri/kdl/settings.nix
 { inputs }:
 
 let

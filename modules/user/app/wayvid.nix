@@ -1,4 +1,4 @@
-# modules/user/wayvid.nix
+# modules/user/app/wayvid.nix
 {
   config,
   pkgs,

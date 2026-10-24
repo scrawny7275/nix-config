@@ -1,4 +1,4 @@
-# modules/user/desktop/niri/hmwindow-rules.nix
+# modules/user/desktop/niri/hm/window-rules.nix
 {
   window-rules = [
     # All windows rounded corners

@@ -1,4 +1,4 @@
-# modules/user/desktop/niri/hmcosmic-ext/default.nix
+# modules/user/desktop/niri/cosmic-ext/default.nix
 {
   config,
   pkgs,

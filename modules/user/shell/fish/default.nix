@@ -1,4 +1,4 @@
-# modules/user/shell/fish/deafult.nix
+# modules/user/shell/fish/default.nix
 { config, pkgs, ... }:
 
 let

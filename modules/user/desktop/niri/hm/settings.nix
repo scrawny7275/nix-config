@@ -1,4 +1,4 @@
-# modules/user/desktop/niri/hmsettings.nix
+# modules/user/desktop/niri/hm/settings.nix
 {
   prefer-no-csd = true;
 
