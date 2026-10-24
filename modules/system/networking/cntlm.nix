@@ -8,8 +8,8 @@
 
 let
   passwordFilePath = "/run/secrets/cntlm/password";
-  # Employer values from the private input (stub/public when not supplied).
-  # See modules/system/employer.nix.
+  # Proxy credentials from the private input (stub/public when not supplied).
+  # See modules/system/private.nix.
   inherit (config.modules.private) values enable;
 in
 {

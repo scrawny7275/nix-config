@@ -5,6 +5,7 @@
 # (--override-input private path:$HOME/nix-config-private) and ships its own
 # policy.nix, the private adapter replaces this file's policy entirely
 # (see modules/system/private.nix + modules/user/private.nix).
+# TODO: If this is replaced it wouldn't need a declared strcuct for validate the icoming cas?
 {
   javaTrustStorePassword = "changeit";
 
@@ -14,7 +15,7 @@
   ];
 
   cas = {
-    # Private/employer CAs are injected by the private input's policy.nix.
+    # Private CAs are injected by the private input's policy.nix.
     # Example shape:
     # private = {
     #   enable = true;

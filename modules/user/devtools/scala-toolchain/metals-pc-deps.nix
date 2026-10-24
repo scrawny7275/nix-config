@@ -160,7 +160,7 @@ stdenv.mkDerivation {
     # entries there prevent mirror re-fetches of this pinned set.
     # (The sonatype-snapshots key that Embedded.repositories appends is
     # added by the pure pcCacheLayout derivation in metals-wrapper.nix.)
-    # Mirror keys come from the private private input (stub: none).
+    # Mirror keys come from the private input (stub: none).
     ${lib.optionalString (nexusMirrorKeys != [ ]) ''
       for nexusKey in ${lib.concatMapStringsSep " " lib.escapeShellArg nexusMirrorKeys}; do
         mirror="$PWD/cache/v1/https/$nexusKey"

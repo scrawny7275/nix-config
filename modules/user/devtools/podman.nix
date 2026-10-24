@@ -20,7 +20,7 @@ in
     enable = true;
 
     settings = {
-      # Private/insecure registries come from the private private input
+      # Private/insecure registries come from the private input
       # (stub: none). DNS likewise — needed to resolve internal mirror domains.
       registries.insecure = v.registries;
       containers = {

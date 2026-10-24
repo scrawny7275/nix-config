@@ -9,7 +9,7 @@
 let
   secretPath = name: config.sops.secrets."openvpn/${name}".path;
   profileUuid = "a1b2c3d4-e5f6-7890-abcd-ef1234567890";
-  # Employer VPN values from the private input (see modules/system/employer.nix).
+  # VPN values from the private input (see modules/system/private.nix).
   # With the public stub (real = false): no server is defined at all.
   inherit (config.modules.private) values;
   on = config.modules.private.enable && values.vpnRemote != null;

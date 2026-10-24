@@ -36,12 +36,12 @@
     plasma-manager.inputs.nixpkgs.follows = "stable";
 
     sonora.url = "github:sonorahq/sonora";
-    opencode.url = "github:anomalyco/opencode";
+    opencode.url = "github:anomalyco/opencode/v1";
 
     # Data-only private input. Public tree carries the stub; the real working
     # environment lives in ~/nix-config-private (never published) and is swapped
     # in per-invocation with:
-    #   --override-input employer path:$HOME/nix-config-private
+    #   --override-input private path:$HOME/nix-config-private
     private = {
       url = "path:./share/private-stub";
       flake = false;
@@ -53,7 +53,7 @@
     let
       # Values from the private input (public stub by default, private override
       # when supplied). Drives the home-manager configuration attribute name.
-      employerValues = import (inputs.private + "/values.nix");
+      privateValues = import (inputs.private + "/values.nix");
 
       # All inputs needed by both system and home-manager (for GC root pinning)
       allInputs = {
@@ -138,6 +138,9 @@
           pdfcraft = pkgs.callPackage ./pkgs/pdfcraft { };
           deckcraft = pkgs.callPackage ./pkgs/deckcraft { };
           blanc = pkgs.callPackage ./pkgs/blanc { };
+          opencode = pkgs.callPackage ./pkgs/opencode {
+            upstreamCliVersion = inputs.opencode.packages.${system}.opencode.version;
+          };
         }
       );
 
@@ -148,7 +151,7 @@
         modules = [ ./hosts/laptop/system.nix ];
       };
 
-      homeConfigurations.${employerValues.userName} = inputs.home-manager.lib.homeManagerConfiguration {
+      homeConfigurations.${privateValues.userName} = inputs.home-manager.lib.homeManagerConfiguration {
         # Standalone home-manager does not see the NixOS-level unfree
         # predicate, so import nixpkgs with the same allow-list here
         # (hosts/laptop/packages/unfree-list.nix is the single source).
@@ -217,7 +220,7 @@
       checks.x86_64-linux.xdg-registry =
         let
           lib = inputs.stable.lib;
-          home = inputs.self.homeConfigurations.${employerValues.userName};
+          home = inputs.self.homeConfigurations.${privateValues.userName};
           failed = lib.filter (a: !a.assertion) home.config.assertions;
         in
         if failed == [ ] then

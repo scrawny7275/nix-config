@@ -1,4 +1,4 @@
-# modules/user/devtools/scala-toolchain.nix
+# modules/user/devtools/scala-toolchain/default.nix
 {
   config,
   lib,
@@ -13,9 +13,9 @@ let
   certs = config.security.certificates;
 
   # Private maven mirror coordinates come from the private input
-  # (stub: none — public repos only). See modules/user/employer.nix.
+  # (stub: none — public repos only). See modules/user/private.nix.
   v = config.modules.private.values;
-  employerOn = config.modules.private.enable && v.nexus != null;
+  privateOn = config.modules.private.enable && v.nexus != null;
 
   sslFlags = lib.optionalString certs.enable (
     lib.concatStringsSep " " [
@@ -50,11 +50,11 @@ in
     repoMode = lib.mkOption {
       type = lib.types.enum [
         "default-only"
-        "employer-launcher"
-        "employer-global"
+        "private-launcher"
+        "private-global"
       ];
       default = "default-only";
-      description = "default-only: public maven repos; employer-*: private mirrors from the private input";
+      description = "default-only: public maven repos; private-*: private mirrors from the private input";
     };
 
     sbtPackage = lib.mkOption {
@@ -83,7 +83,7 @@ in
 
       # SBT credentials
       # NOTE: host and user are plain strings (not secrets), resolved from the
-      # private private input; only the password comes from sops at runtime.
+      # private input; only the password comes from sops at runtime.
       {
         sops.secrets."sbt_nexus/password".mode = "0600";
       }
@@ -98,7 +98,7 @@ in
 
       # Private Coursier mirrors — needed by Metals too, not just SBT.
       # Chain comes from the private input; Central is always in it as fallback.
-      (lib.mkIf (cfg.repoMode != "default-only" && employerOn) {
+      (lib.mkIf (cfg.repoMode != "default-only" && privateOn) {
         home.sessionVariables.COURSIER_REPOSITORIES = v.coursierRepositoriesToolchain;
       })
 
@@ -107,9 +107,9 @@ in
         programs.sbt = {
           enable = true;
           package = cfg.sbtPackage.override { jre = config.devtools.java.selectedJdk; };
-          credentials = lib.mkIf (cfg.repoMode != "default-only" && employerOn) [
+          credentials = lib.mkIf (cfg.repoMode != "default-only" && privateOn) [
             {
-              realm = "Sonatype Nexus Repository Manager";
+              realm = v.nexus.realm;
               host = v.nexus.primary;
               user = v.nexus.user;
               passwordCommand = "cat ${config.sops.secrets."sbt_nexus/password".path}";
@@ -118,12 +118,12 @@ in
         };
       }
 
-      (lib.mkIf (cfg.repoMode == "employer-launcher" && employerOn) {
+      (lib.mkIf (cfg.repoMode == "private-launcher" && privateOn) {
         # Launcher-mode resolver list ships inside the private input.
         programs.sbt.repositories = v.sbtRepositories;
       })
 
-      (lib.mkIf (cfg.repoMode == "employer-global" && employerOn) {
+      (lib.mkIf (cfg.repoMode == "private-global" && privateOn) {
         # Global resolvers file ships inside the private input.
         home.file.".sbt/1.0/global.sbt".text = builtins.readFile (inputs.private + "/resolvers.sbt");
       })

@@ -1,6 +1,6 @@
-# modules/user/employer.nix
-# Adapter for the private `employer` flake input (user axis).
-# Same contract as modules/system/employer.nix — both axes import the same values.nix.
+# modules/user/private.nix
+# Adapter for the private flake input (user axis).
+# Same contract as modules/system/private.nix — both axes import the same values.nix.
 {
   config,
   lib,
@@ -19,7 +19,7 @@ in
     enable = lib.mkOption {
       type = lib.types.bool;
       default = v.real;
-      description = "Employer/private environment integration (real values come from the private override input).";
+      description = "Private environment integration (real values come from the private override input).";
     };
 
     values = lib.mkOption {
@@ -44,7 +44,7 @@ in
       ];
 
       warnings = lib.optional (!v.real)
-        "private input: public stub in effect (private override not supplied); employer integration is disabled";
+        "private input: public stub in effect (private override not supplied); private integration is disabled";
     }
 
     # Private policy (CA certs, noProxy domains) overrides the host's public

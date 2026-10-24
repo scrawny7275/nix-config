@@ -17,8 +17,22 @@ if [ -f share/private-stub/values.nix ]; then
   grep -q '^  real = false;' share/private-stub/values.nix
   echo 'ok: stub tracked and real=false'
 else
-  echo 'SKIP: no employer stub in this tree (pre-security era)'
+  echo 'SKIP: no private stub in this tree (pre-security era)'
 fi
+
+echo '--- rename-residue gate ---'
+# Deny-list assembled from fragments so this file cannot match itself.
+# Catches: the retired input-era vocabulary (any case), dead module paths
+# from renames, and blind find-replace garbles. A rename that ships residue
+# fails here — complete the sweep, do not extend the list.
+R1='employ'; R2='er'; G1='private pri'; G2='vate'
+RESIDUE="$(git grep -il -e "$R1$R2" -e "$G1$G2" -- . || true)"
+if [ -n "$RESIDUE" ]; then
+  echo 'FAIL: rename residue in tracked files:'
+  echo "$RESIDUE"
+  exit 1
+fi
+echo 'ok: no rename residue'
 
 echo '--- flake.lock hygiene ---'
 if [ -f flake.lock ] && [ "$scaffolded" = 1 ]; then

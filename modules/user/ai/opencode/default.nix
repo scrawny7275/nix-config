@@ -23,7 +23,14 @@ in
 
   programs.opencode = {
     enable = true;
-    package = inputs.opencode.packages.${pkgs.stdenv.hostPlatform.system}.default;
+    # Prebuilt release binary (pkgs/opencode); version mirrors the input's
+    # CLI package (the source-built one this replaces) — only the fetchurl
+    # hash is manual. The desktop below stays same-release via the shared
+    # input pin, not via this version string.
+    package = pkgs.callPackage ../../../../pkgs/opencode {
+      upstreamCliVersion =
+        inputs.opencode.packages.${pkgs.stdenv.hostPlatform.system}.opencode.version;
+    };
     web.enable = false;
 
     settings = {

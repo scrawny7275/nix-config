@@ -11,17 +11,20 @@ symlink (see [Known Limitations](#known-limitations)).
 ---
 
 ## Roadmap
-  Completetly declare all my used web browsers with shared host-based:
-    - extensions
-    - search egienes
+
+Completetly declare all my used web browsers with shared host-based: - extensions - search engines
 
 ## Daily Workflow
+
+<!--TODO: refactor for new structure:
+     sudo nixos-rebuild switch --flake ~/nix-config#<host> --override-input private path:$HOME/nix-config-private
+     home-manager switch --flake ~/nix-config#<user> --override-input private path:$HOME/nix-config-private-->
 
 ```bash
 # Full update and apply
 nix flake update
-sudo nixos-rebuild switch --flake .#laptop
-home-manager switch --flake .#<user>  # attribute name comes from the private private input
+sudo nixos-rebuild switch --flake .#<host>
+home-manager switch --flake .#<user>  # attribute name comes from the private input
 ```
 
 > **Warning:** `nixos-rebuild` and `home-manager switch` evaluate the flake

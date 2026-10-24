@@ -94,7 +94,7 @@ let
   );
 
   # Repo list mirrors hosts/laptop/home.nix COURSIER_REPOSITORIES — it is
-  # supplied by the same private private input (stub: ivy2Local|central).
+  # supplied by the same private input (stub: ivy2Local|central).
   # central FIRST (publicly reachable from any network; the private cache
   # is seeded from Central so hits work off-VPN), mirrors after. Coursier
   # walks in order and falls through past unreachable repos, so

@@ -11,16 +11,16 @@
 }:
 
 let
-  # Personal + employer values flow from the private `private` input
-  # (stub unless --override-input private ...). See modules/system/employer.nix.
+  # Personal and work values flow from the private input
+  # (stub unless --override-input private ...). See modules/system/private.nix.
   v = config.modules.private.values;
   # Real hardware scan (disk UUIDs) ships only in the private input; the public
   # repo carries a generic skeleton. NOTE: `imports` may not depend on `config`
   # (module-system recursion), so this read is straight from the input path —
   # pure-eval-safe because the path lives INSIDE the input.
-  employerInput = inputs.private;
-  privateHw = employerInput + "/hardware.nix";
-  privateValues = import (employerInput + "/values.nix");
+  privateInput = inputs.private;
+  privateHw = privateInput + "/hardware.nix";
+  privateValues = import (privateInput + "/values.nix");
   hardwareFile = if privateValues.real && builtins.pathExists privateHw then privateHw else ./hardware.nix;
 in
 {

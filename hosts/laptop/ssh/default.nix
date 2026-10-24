@@ -1,5 +1,5 @@
 # hosts/laptop/ssh/default.nix
-# SSH identities are data, supplied by the private private input's
+# SSH identities are data, supplied by the private input's
 # values.nix (sshIdentities matrix). Public stub = empty. Shape per entry:
 #   { host; hostname; user; keyName; port ? 22; proxy ? null; managedSecret ? null }
 # managedSecret = sops key name "ssh/<managedSecret>" delivering the key.

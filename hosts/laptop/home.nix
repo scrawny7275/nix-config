@@ -8,7 +8,7 @@
 }:
 
 let
-  # Personal + employer values from the private input (stub by default).
+  # Personal and work values from the private input (stub by default).
   # See modules/user/private.nix.
   v = config.modules.private.values;
 in

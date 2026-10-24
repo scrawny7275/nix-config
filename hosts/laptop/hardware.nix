@@ -1,6 +1,6 @@
 # hosts/laptop/hardware.nix
 # Generic hardware skeleton (public). The real machine scan — disk UUIDs included —
-# lives in the private private input (~/nix-config-private/hardware.nix) and is
+# lives in the private input (~/nix-config-private/hardware.nix) and is
 # selected instead of this file when the override is active (see system.nix).
 { config, lib, pkgs, modulesPath, ... }:
 
