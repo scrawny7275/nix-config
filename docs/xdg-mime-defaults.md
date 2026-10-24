@@ -160,7 +160,10 @@ or declare everything like the laptop does.
   dream — zero registration lines, complete reality coverage — but it is
   invisible to `nix flake check`/CI and has no fitness gate (a
   wrong-but-installed app passes existence). Registry = fitness at eval;
-  scan = existence at switch. Orthogonal, both shipped.
+  scan = existence at switch. Orthogonal, both shipped. (The registry is
+  CI-visible only via the explicit `checks.x86_64-linux.xdg-registry`
+  forcing hook in the flake — plain flake-check evaluation does not reach
+  home-config depth; see the enforcement map under Verification.)
 - **`mime-apps-scan.nix` vs `desktop-entry-guard.nix`.** The guard _prunes_
   dangling handwritten entries at activation; the scan is a _gate_ that
   never deletes and vetoes the switch. Different bug classes, different
@@ -177,6 +180,16 @@ or declare everything like the laptop does.
   org.system76 scenario as the selection-typo fixture (exact message),
   registration role typo, unregistered override.
 - The real config evaluates with **0 failing assertions**.
+- **Enforcement map (empirically verified)**: the registry fires wherever
+  the home configuration is forced — any `nix eval` touching config, the
+  `activationPackage` build (i.e. every switch), and `nix flake check` —
+  but only because the flake carries an explicit forcing hook
+  (`checks.x86_64-linux.xdg-registry`), since plain flake-check evaluation
+  does not reach home-config depth: without the hook, an unregistered
+  selection passes flake check and would abort only at the switch. The
+  scan fires only at activation. Proven by injection: a declared
+  `ghost.desktop` fails the eval and the switch build with the registry
+  message, and (with the hook) fails `nix flake check` with rc 1.
 - The scan was proven against a built activation package: 13/13 desktop
   IDs resolve in the live environment; a ghost ID aborts with the message
   above.

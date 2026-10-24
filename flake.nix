@@ -206,5 +206,23 @@
           pkgs.runCommand "unit-tests-pass" { } "touch $out"
         else
           throw "unit tests failed: ${toString (map (f: f.name) failures)}";
+
+      # The closed xdg candidate registry (docs/xdg-mime-defaults.md) is a
+      # config-forcing gate: it fires on any eval of the home configuration
+      # and on the activationPackage build (the switch), but plain
+      # `nix flake check` does not force that depth — force it here so CI
+      # enforces the registry too. Empirically verified: without this check,
+      # flake check passes while an unregistered roleApps selection would
+      # abort the switch.
+      checks.x86_64-linux.xdg-registry =
+        let
+          lib = inputs.stable.lib;
+          home = inputs.self.homeConfigurations.${employerValues.userName};
+          failed = lib.filter (a: !a.assertion) home.config.assertions;
+        in
+        if failed == [ ] then
+          inputs.stable.legacyPackages.x86_64-linux.runCommand "xdg-registry-pass" { } "touch $out"
+        else
+          throw "xdg registry assertions failed: ${toString (map (a: a.message) failed)}";
     };
 }
